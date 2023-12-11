@@ -83,3 +83,5 @@ export async function loadComponent(componentName) {
         return null;
     }
 }
+
+export const bucketBaseUrl = 'https://storage.googleapis.com/sensei_assets/websrc';

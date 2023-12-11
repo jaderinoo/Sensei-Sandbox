@@ -70,32 +70,21 @@ class Scene1 extends Phaser.Scene {
     onButtonLeftPressed() {
         this.currentIndex = Math.max(0, this.currentIndex - 1);
         this.updateObjectVisibility();
-
     }
-
+    
     onButtonRightPressed() {
-        if (this.currentIndex < 2) {
-            this.currentIndex = Math.min(3, this.currentIndex + 1);
-        }
+        this.currentIndex = Math.min(3, this.currentIndex + 1);
         this.updateObjectVisibility();
     }
-
+    
     updateObjectVisibility() {
-        if (this.currentIndex === 0) {
-            this.paragraph[0].setVisible(false);
-            this.paragraph[1].setVisible(false);
-            this.banner[0].setVisible(false);
-            this.banner[1].setVisible(false);
-        } else if (this.currentIndex === 1) {
-            this.paragraph[0].setVisible(true);
-            this.paragraph[1].setVisible(true);
-            this.banner[0].setVisible(false);
-            this.banner[1].setVisible(false);
-        } else if (this.currentIndex === 2) {
-            this.banner[0].setVisible(true);
-            this.banner[1].setVisible(true);
-        }
+        const isParagraphVisible = this.currentIndex === 1;
+        const isBannerVisible = this.currentIndex === 2;
+    
+        this.paragraph.forEach(p => p.setVisible(isParagraphVisible));
+        this.banner.forEach(b => b.setVisible(isBannerVisible));
     }
+    
 }
 
 export default Scene1;
