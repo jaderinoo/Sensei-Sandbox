@@ -1,10 +1,8 @@
 
 
 class UIScene extends Phaser.Scene {
-    static folderName = '';
-
     constructor() {
-        super('UIScene');
+        super({ key: 'UIScene', active: true, visible: true });
         this.currentIndex = 2;
         this.visitedIndexes = [0, 1];
         this.rectDimensions = [];
@@ -16,8 +14,7 @@ class UIScene extends Phaser.Scene {
         this.currentDefBoxTween = null;
     }
 
-    init(data) {
-        this.folderName = data.folderName;
+    init() {
         this.sceneCount = 5;
     }
 
@@ -44,10 +41,18 @@ class UIScene extends Phaser.Scene {
             .setOrigin(1, 1)
             .setInteractive({ useHandCursor: true })
             .setScale(1.5)
-            .setVisible(this.sceneCount > 1);
+            .setVisible(true);
 
         this.buttonLeft = buttonLeft;
         this.buttonRight = buttonRight;
+
+        buttonLeft.on('pointerdown', () => {
+            this.events.emit('buttonLeftPressed');
+        });
+        
+        buttonRight.on('pointerdown', () => {
+            this.events.emit('buttonRightPressed');
+        });        
 
         this.initProgressBar();
     }

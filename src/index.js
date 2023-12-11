@@ -4,6 +4,7 @@ import Phaser from 'phaser';
 import BBCodeTextPlugin from 'phaser3-rex-plugins/plugins/bbcodetext-plugin.js';
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
 import UIScene from './components/UIscene';
+import Scene1 from './scenes/scene1';
 
 const config = {
     type: Phaser.AUTO,
@@ -13,7 +14,7 @@ const config = {
     disablePostFX: false,
     powerPreference: 'high-performance',
     parent: 'phaser-game',
-    scene: [UIScene],
+    scene: [Scene1, UIScene],
     backgroundColor: '#F5F5F5',
     resolution: window.devicePixelRatio || 1,
     pixelArt: true,
