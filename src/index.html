@@ -1,32 +1,78 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>Phaser 3 Sandbox</title>
     <style>
-        body, html {
+        body,
+        html {
             margin: 0;
             height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: url('https://storage.googleapis.com/sensei_assets/websrc/Hardware/Backgrounds/bg1.png') no-repeat center center fixed; 
+            background: url('https://storage.googleapis.com/sensei_assets/websrc/Hardware/Backgrounds/bg1.png') no-repeat center center fixed;
             background-size: cover;
+            position: relative;
         }
+
         #phaser-game {
             display: flex;
             justify-content: center;
             align-items: center;
         }
+
         canvas {
             display: block;
             border-radius: 15px;
         }
+
+        #userInputButton,
+        #restartGameButton {
+            position: absolute;
+            top: 5%;
+            z-index: 10;
+        }
+
+        #userInputButton {
+            right: 0%;
+        }
+
+        #restartGameButton {
+            right: calc(10% + 100px);
+        }
     </style>
 </head>
+
 <body>
-
-<div id="phaser-game"></div>
-
+    <div id="phaser-game"></div>
+    <button id="userInputButton">Load Component</button>
+    <button id="restartGameButton">Refresh</button>
 </body>
+
 </html>
+<script>
+    window.onload = function () {
+        const loadComponentButton = document.getElementById('userInputButton');
+        loadComponentButton.addEventListener('click', function () {
+            const userInput = prompt("Enter the component name:");
+            if (userInput) {
+                const scene = window.game.scene.getScene('scene1');
+                if (scene && scene.addUserComponent) {
+                    scene.addUserComponent(userInput);
+                } else {
+                    console.error('Scene1 is not available or addUserComponent is not a function');
+                }
+            }
+        });
+
+        const restartGameButton = document.getElementById('restartGameButton');
+        restartGameButton.addEventListener('click', function () {
+            if (window.game) {
+                window.game.destroy(true);
+                window.game = new Phaser.Game(window.gameConfig);
+            }
+        });
+    };
+</script>

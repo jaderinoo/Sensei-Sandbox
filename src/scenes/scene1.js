@@ -10,8 +10,14 @@ class Scene1 extends Phaser.Scene {
     constructor() {
         super({
             key: 'scene1',
+            // Physics configuration for this scene
+            // Feel free to modify this as needed
             physics: {
                 default: 'matter',
+                matter: {
+                    gravity: { y: .1 },
+                    debug: false
+                }
             }
         })
         this.paragraph = null;
@@ -34,9 +40,10 @@ class Scene1 extends Phaser.Scene {
 
         this.scene.get('UIScene').events.on('buttonLeftPressed', this.onButtonLeftPressed, this);
         this.scene.get('UIScene').events.on('buttonRightPressed', this.onButtonRightPressed, this);
+    }
 
-        const userInput = prompt("Enter the component name:");
-        this.addComponent(userInput);
+    addUserComponent(componentName) {
+        this.addComponent(componentName);
     }
 
     async addComponent(componentName) {
@@ -74,12 +81,12 @@ class Scene1 extends Phaser.Scene {
     }
 
     onButtonRightPressed() {
-        this.currentIndex = Math.min(3, this.currentIndex + 1);
+        this.currentIndex = Math.min(2, this.currentIndex + 1);
         this.updateObjectVisibility();
     }
 
     updateObjectVisibility() {
-        const isParagraphVisible = this.currentIndex === 1;
+        const isParagraphVisible = this.currentIndex === 1 || this.currentIndex === 2;
         const isBannerVisible = this.currentIndex === 2;
 
         this.paragraph.forEach(p => p.setVisible(isParagraphVisible));
