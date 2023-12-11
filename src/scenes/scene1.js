@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import { senseiParagraph, senseiBanner } from '../utils/text';
 import { createPreloader } from '../utils/utils';
+import { loadComponent } from '../utils/utils';
+
 
 const preloadComponents = createPreloader([]);
 class Scene1 extends Phaser.Scene {
@@ -15,21 +17,39 @@ class Scene1 extends Phaser.Scene {
         this.paragraph = null;
         this.banner = null;
         this.currentIndex = 2;
+        this.dynamicComponents = []; // Array to hold dynamically loaded components
     }
 
     preload() {
-        if (!this.assetsLoaded) {
-            preloadComponents(this);
+        if (!Scene1.assetsLoaded) {
+            createPreloader(this.dynamicComponents)(this); // Preload dynamic components
+            preloadComponents(this); // Preload other components
+            Scene1.assetsLoaded = true;
         }
     }
 
     create() {
-
         this.paragraph = senseiParagraph(this, '[h]Hardware[/h]\n\nIs the [b]building blocks[/b] that [b]assemble[/b] our connected world. It is every [b]physical[/b] and [b]tangible[/b] piece of the tecnological world.\n\nHardware is everywhere and everything.', { backgroundFill: 0xffffff, outline: 0xffffff, backgroundOpacity: 0.85 });
         this.banner = senseiBanner(this, 'Hardware', { backgroundFill: '#ffffff', backgroundOpacity: 0.65 })
 
         this.scene.get('UIScene').events.on('buttonLeftPressed', this.onButtonLeftPressed, this);
         this.scene.get('UIScene').events.on('buttonRightPressed', this.onButtonRightPressed, this);
+
+        const userInput = prompt("Enter the component name:");
+        this.addComponent(userInput);
+    }
+
+    async addComponent(componentName) {
+        const component = await loadComponent(componentName);
+        if (component) {
+            this.dynamicComponents.push(component);
+            if (typeof component.component === 'function') {
+                component.component(this);
+            }
+            if (typeof component.preload === 'function') {
+                component.preload(this);
+            }
+        }
     }
 
     onButtonLeftPressed() {

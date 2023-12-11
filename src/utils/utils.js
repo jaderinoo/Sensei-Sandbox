@@ -73,3 +73,13 @@ export function TextStyle(scene, options = {}) {
         }
     };
 }
+
+export async function loadComponent(componentName) {
+    try {
+        const module = await import(`../usr/${componentName}.js`);
+        return module.default;
+    } catch (error) {
+        console.error('Failed to load component:', error);
+        return null;
+    }
+}
