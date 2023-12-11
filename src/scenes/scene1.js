@@ -42,11 +42,8 @@ class Scene1 extends Phaser.Scene {
     async addComponent(componentName) {
         const component = await loadComponent(componentName);
         if (component) {
-            // Prompt for parameters
             const paramsInput = prompt("Enter parameters:");
             let params = {};
-
-            // Evaluate parameters if input is provided
             if (paramsInput) {
                 try {
                     const paramsFunc = new Function('scene', `return ${paramsInput};`);
@@ -55,15 +52,19 @@ class Scene1 extends Phaser.Scene {
                     console.error('Failed to evaluate parameters:', error);
                 }
             }
-
-            // Add component with parameters
-            this.dynamicComponents.push(component);
-            if (typeof component.component === 'function') {
-                component.component(this, params);
-            }
             if (typeof component.preload === 'function') {
                 component.preload(this);
             }
+            this.load.start();
+            this.load.once('complete', () => {
+                this.onLoadComplete(component, params);
+            });
+        }
+    }
+
+    onLoadComplete(component, params) {
+        if (typeof component.component === 'function') {
+            component.component(this, params);
         }
     }
 
@@ -71,20 +72,20 @@ class Scene1 extends Phaser.Scene {
         this.currentIndex = Math.max(0, this.currentIndex - 1);
         this.updateObjectVisibility();
     }
-    
+
     onButtonRightPressed() {
         this.currentIndex = Math.min(3, this.currentIndex + 1);
         this.updateObjectVisibility();
     }
-    
+
     updateObjectVisibility() {
         const isParagraphVisible = this.currentIndex === 1;
         const isBannerVisible = this.currentIndex === 2;
-    
+
         this.paragraph.forEach(p => p.setVisible(isParagraphVisible));
         this.banner.forEach(b => b.setVisible(isBannerVisible));
     }
-    
+
 }
 
 export default Scene1;

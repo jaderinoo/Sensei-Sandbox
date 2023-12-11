@@ -5,6 +5,7 @@ export function createPreloader(components) {
                 component.preload(scene);
             }
         });
+        scene.load.start();
     };
 }
 

@@ -17,13 +17,13 @@ export function component(scene, options = {}) {
     //     count = 3
     // } = options;
     const {
+        fill = '#0f0'
     } = options;
 
     const { width, height } = scene.scale;
 
     // Phaser components go here
-
-    scene.add.text(width / 2, height / 2, 'Hello World', { fill: '#0f0' }).setOrigin(0.5);
+    scene.add.text(width / 2, height / 2, 'Hello World', { fill: fill }).setOrigin(0.5);
 }
 
 export default {
