@@ -5,8 +5,8 @@ class UIScene extends Phaser.Scene {
 
     constructor() {
         super('UIScene');
-        this.currentIndex = 0;
-        this.visitedIndexes = [0];
+        this.currentIndex = 2;
+        this.visitedIndexes = [0, 1];
         this.rectDimensions = [];
         this.rectTweenTargets = [];
         this.margin = 15;
@@ -18,7 +18,7 @@ class UIScene extends Phaser.Scene {
 
     init(data) {
         this.folderName = data.folderName;
-        this.sceneCount = 3;
+        this.sceneCount = 5;
     }
 
     preload() {
@@ -29,44 +29,27 @@ class UIScene extends Phaser.Scene {
     create() {
         const { width, height } = this.scale;
 
-        // Calculate the padding values
         const padding = {
             x: width * 0.05,
             y: height * 0.05,
         };
 
-        // Create the button on the bottom left with 5% padding from the bottom and the left
         const buttonLeft = this.add.image(padding.x, height - padding.y, 'left_button')
             .setOrigin(0, 1)  // Set origin to bottom left
             .setInteractive({ useHandCursor: true })
             .setScale(1.5)
-            .setVisible(false);
+            .setVisible(true);
 
-        // Create the button on the bottom right with 5% padding from the bottom and the right
         const buttonRight = this.add.image(width - padding.x, height - padding.y, 'right_button')
-            .setOrigin(1, 1)  // Set origin to bottom right
+            .setOrigin(1, 1)
             .setInteractive({ useHandCursor: true })
             .setScale(1.5)
             .setVisible(this.sceneCount > 1);
-
-        // Setup event listeners
-        buttonLeft.on('pointerdown', () => {
-            this.events.emit('buttonLeftPressed');
-        });
-
-        buttonRight.on('pointerdown', () => {
-            this.events.emit('buttonRightPressed');
-        });
 
         this.buttonLeft = buttonLeft;
         this.buttonRight = buttonRight;
 
         this.initProgressBar();
-
-        // Handle the display of the definition box
-        this.defBox = null;
-        this.events.on('displayDefinition', this.displayDefinition, this);
-        this.input.on('pointerdown', this.handlePointerDown, this);
     }
 
     updateButtonVisibility(currentIndex, totalScenes) {
@@ -129,106 +112,6 @@ class UIScene extends Phaser.Scene {
                 size.height,
                 radius
             );
-        }
-    }
-    
-    updateProgress(index, visitedIndexes) {
-        const seenSize = { width: 10, height: 20 };
-        const currentSize = { width: 10, height: 30 };
-        const unseenSize = { width: 10, height: 10 };
-    
-        if (this.currentIndex !== index) {
-            this.tweenRectangleSize(this.currentIndex, this.visitedIndexes.includes(this.currentIndex) ? seenSize : unseenSize);
-            this.tweenRectangleSize(index, currentSize);
-        }
-    
-        this.currentIndex = index;
-        this.visitedIndexes = visitedIndexes;
-    }
-
-    tweenRectangleSize(index, newSize) {
-        let tweenTarget = this.rectTweenTargets[index];
-        const widthDiff = tweenTarget.width - newSize.width;
-        const newX = tweenTarget.x + widthDiff / 2;
-    
-        this.tweens.add({
-            targets: tweenTarget,
-            width: newSize.width,
-            height: newSize.height,
-            x: newX,
-            duration: 250,
-            ease: 'Sine.easeInOut',
-            onUpdate: () => {
-                this.rectDimensions[index].width = tweenTarget.width;
-                this.rectDimensions[index].height = tweenTarget.height;
-                this.rectDimensions[index].x = tweenTarget.x;
-                this.updateProgressBar(); 
-            }
-        });
-    }
-
-    displayDefinition(definition) {
-        this.closeDefinitionBox();
-
-        this.openingNewDefinition = true;
-        const boxWidth = this.scale.width;
-        const boxX = this.scale.width / 2;
-        this.defBox?.destroy();
-        this.defBox = this.add.container(boxX, 0).setDepth(100);
-        const defTextStyle = TextStyle(this);
-
-        // Create temporary text to measure height
-        const tempText = this.add.text(0, 0, `${definition.keyword}:\n${definition.definition}`, defTextStyle).setWordWrapWidth(boxWidth * 0.9);
-        const textHeight = tempText.height;
-        tempText.destroy();
-
-        this.defBox.boxHeight = textHeight + 20;
-        const boxY = -this.defBox.boxHeight;
-
-        const defBoxBg = this.rexUI.add.roundRectangle(0, 0, boxWidth, this.defBox.boxHeight, { bl: 10, br: 10 }, 0xffffff);
-        defBoxBg.setStrokeStyle(2, 0x000000);
-        const defText = this.add.text(0, 0, `${definition.keyword}:\n${definition.definition}`, defTextStyle).setWordWrapWidth(boxWidth * 0.9).setOrigin(0.5, 0.5);
-        this.defBox.add(defBoxBg);
-        this.defBox.add(defText);
-
-        this.currentDefBoxTween = this.tweens.add({
-            targets: this.defBox,
-            y: this.defBox.boxHeight / 2,
-            duration: 500,
-            ease: 'Power2',
-            paused: false
-        });
-    }
-
-    handlePointerDown(pointer) {
-        if (this.defBox) {
-            const bounds = this.defBox.getBounds();
-            if (!bounds.contains(pointer.x, pointer.y)) {
-                this.closeDefinitionBox();
-            }
-        }
-    }
-
-    closeDefinitionBox() {
-        if (this.currentDefBoxTween) {
-            this.currentDefBoxTween.stop();
-            this.currentDefBoxTween = null;
-        }
-        
-        if (this.defBox) {
-            const defBoxToClose = this.defBox;
-            this.defBox = null;
-
-            this.tweens.add({
-                targets: defBoxToClose,
-                y: -defBoxToClose.boxHeight,
-                duration: 500,
-                ease: 'Power2',
-                paused: false,
-                onComplete: () => {
-                    defBoxToClose.destroy();
-                }
-            });
         }
     }
 }

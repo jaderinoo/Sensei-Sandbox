@@ -17,6 +17,7 @@
     "phaser": "^3.70.0"
   },
   "scripts": {
-    "start": "webpack serve --open"
-  }
+    "start": "webpack serve --open",
+    "build": "webpack --mode production"
+  }  
 }
