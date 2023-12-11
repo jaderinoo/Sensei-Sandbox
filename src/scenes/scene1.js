@@ -17,13 +17,13 @@ class Scene1 extends Phaser.Scene {
         this.paragraph = null;
         this.banner = null;
         this.currentIndex = 2;
-        this.dynamicComponents = []; // Array to hold dynamically loaded components
+        this.dynamicComponents = [];
     }
 
     preload() {
         if (!Scene1.assetsLoaded) {
-            createPreloader(this.dynamicComponents)(this); // Preload dynamic components
-            preloadComponents(this); // Preload other components
+            createPreloader(this.dynamicComponents)(this);
+            preloadComponents(this);
             Scene1.assetsLoaded = true;
         }
     }
@@ -42,9 +42,24 @@ class Scene1 extends Phaser.Scene {
     async addComponent(componentName) {
         const component = await loadComponent(componentName);
         if (component) {
+            // Prompt for parameters
+            const paramsInput = prompt("Enter parameters:");
+            let params = {};
+
+            // Evaluate parameters if input is provided
+            if (paramsInput) {
+                try {
+                    const paramsFunc = new Function('scene', `return ${paramsInput};`);
+                    params = paramsFunc(this);
+                } catch (error) {
+                    console.error('Failed to evaluate parameters:', error);
+                }
+            }
+
+            // Add component with parameters
             this.dynamicComponents.push(component);
             if (typeof component.component === 'function') {
-                component.component(this);
+                component.component(this, params);
             }
             if (typeof component.preload === 'function') {
                 component.preload(this);
