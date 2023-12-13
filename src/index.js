@@ -6,10 +6,29 @@ import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
 import UIScene from './components/UIscene';
 import Scene1 from './scenes/scene1';
 
+
+function getGameDimensions() {
+    const desiredAspectRatio = .5 / 1
+    const aspectRatio = window.innerWidth / window.innerHeight
+    let gameWidth, gameHeight
+
+    if (Math.abs(aspectRatio - desiredAspectRatio) < 0.01) {
+        gameWidth = window.innerWidth * 1
+        gameHeight = gameWidth / desiredAspectRatio
+    } else {
+        gameHeight = window.innerHeight * 0.9
+        gameWidth = gameHeight * desiredAspectRatio
+    }
+
+    return { gameWidth, gameHeight }
+}
+
+const { gameWidth, gameHeight } = getGameDimensions()
+
 const config = {
     type: Phaser.AUTO,
-    width: 400,
-    height: 800,
+    width: gameWidth,
+    height: gameHeight,
     disablePreFX: true,
     disablePostFX: false,
     powerPreference: 'high-performance',
